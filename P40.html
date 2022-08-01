@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap.css">
+    <script src="lib/jquery.js"></script>
+    <!-- 引入axios网络请求框架 -->
+    <script src="lib/axios.js"></script>
+    <script src="lib/myajax.js"></script>
+    <title>Ajax第三天</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- <div> -->
+    <!-- 选择上传的图片 -->
+    <!-- <input type="file" id="selectFile" style="display: inline-block;" /> -->
+    <!-- 用于确认上传的文件 -->
+    <!-- <button id="btnUpload">上传文件</button>
+        <div class="progress" style="width: 5%; display:inline-block;margin-bottom:-5px;margin-left: 15px;">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45"
+                aria-valuemin="0" aria-valuemax="100" id="progress-bar"> -->
+    <!-- 45% -->
+    <!-- </div>
+    </div>
+    </div> -->
+
+    <!-- 用于显示上传成功后的回显图片 -->
+    <!-- <img src="" alt="" id="img" width="800" /> -->
+    <!-- <form id="demo">
+        <input type="text" name="uname" autocomplete="off" />
+        <input type="password" name="upwd">
+        <button type="submit">提交</button>
+    </form> -->
+    <script>
+        // axios直接发起get请求
+        // axios({
+        //     method: 'get',
+        //     url: 'http://www.liulongbin.top:3006/api/get',
+        //     params: {
+        //         name: 'lisi',
+        //         age: 44
+        //     }
+        // }).then(function (res) {
+        //     console.log(res.data);
+        // })
+
+        // axios直接发送post请求
+        axios({
+            method: 'post',
+            url: 'http://www.liulongbin.top:3006/api/post',
+            data: {
+                bookname: '程序猿的修养',
+                price: 12
+            }//对于post请求，这个请求参数就必须是data
+        }).then(function (res) {
+            console.log(res.data);
+        })
+
+        // 使用axios完成post请求
+        // var url = 'http://www.liulongbin.top:3006/api/post';
+        // var postData = { address: '或被', 'location': '这个区' };
+        // axios.post(url, postData).then(function (res) {
+        //     console.log(res.data);
+        // })
+
+
+        // 使用axios完成get请求
+        // 请求接口地址
+        // var url = 'http://www.liulongbin.top:3006/api/get';
+        // // 请求参数
+        // var requestData = { name: 'zs', age: 20 };
+        // // 调用axios，get请求
+        // axios.get(url, { params: requestData }).then(function (res) {
+        //     // 返回的是一个axios封装好后的数据，后台服务器返回的数据要调用对应的data属性获取，这里返回的属性名就是data，里面存的就是后台数据库中的数据
+        //     console.log(res);
+        //     var result = res.data;
+        //     console.log(result);
+        // });
+
+
+            // 使用jQUery结合ajax实现上传文件并且显示上传图，上传成功后隐藏上传图
+            // $(function () {
+            //     $('#btnUpload').on('click', function () {
+            //         // 使用ajax获取元素时，不能直接使用原生JS获取上传的文件，需要先转换成JS对象，就是加上[0]
+            //         // alert('进来了');
+            //         var files = $('#selectFile')[0].files;
+            //         if (files.length <= 0) {
+            //             return alert('请选择文件后再进行上传');
+            //         }
+            //         var formData = new FormData();//直接将文件实例化成formData会报错，说不是这样元素
+            //         // 不是上传所有的files，这个是单个上传，所以要选择files中第一个元素
+            //         formData.append('avatar', files[0]);
+            //         // ajax开始执行请求时，进行监听，jQuery的1.8之后这个事件必须写在document元素的后面
+            //         $(document).ajaxStart(function () {
+            //             $('#progress-bar').html('哎呦卧槽');
+            //         });
+            //         $(document).ajaxStop(function () {
+            //             $('#progress-bar').html('结束了');
+            //         })
+
+            //         $.ajax({
+            //             url: 'http://www.liulongbin.top:3006/api/upload/avatar',
+            //             method: 'POST',
+            //             // data: files,//message: '上传文件失败！文件个数为0', status: 502。直接将文件上传会失败
+            //             data: formData,//上传的图片转换成formDate类型的数据后，通过ajax发送到后台
+            //             processData: false,
+            //             contentType: false,
+            //             success: function (res) {
+            //                 console.log(res);
+            //             }
+            //         })
+            //     })
+            // })
+
+        // 1.获取到上传按钮
+        // var btnUpload = document.querySelector('#btnUpload');
+        // // 2.为上传按钮绑定监听事件
+        // // 首先获取到用于选择上传的文件
+        // btnUpload.addEventListener('click', function () {
+        //     // 注意书写位置，这个files不能直接在上传文件函数外面赋值，否则代码一开始执行的时候，长度就为0，那么会一直提示警告！
+        //     var files = document.querySelector('#selectFile').files;
+        //     // console.log(files.length);
+        //     if (files.length <= 0) {
+        //         return alert('请选择文件后再进行上传操作!');
+        //     }
+        //     // 3.实例化一个表单数据对象，将上传的文件添加进去
+        //     var formData = new FormData();
+        //     formData.append('avatar', files[0]);
+        //     // 4.使用xhr对象进行数据上传，并且回显上传的信息和图片
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open('POST', 'http://www.liulongbin.top:3006/api/upload/avatar');
+        //     // 获取进度条的父盒子
+        //     var progress = document.querySelector('.progress');
+        //     // 获取进度条元素
+        //     var progressBar = document.querySelector('#progress-bar');
+        //     //监听文件的上传进度，必须在往表单中填充数据之前监听进度事件，否则填充数据的代码执行完成后上传就完成了
+        //     xhr.upload.onprogress = function (e) {
+        //         // e.lengthComputable是一个布尔值，为true的时候，计算上传的进度。
+        //         // 这里上传到接口的时候要在控制台的network中的No throttling选项设置一下网速为slow 3g，否则网速块直接就上传完成了
+        //         if (e.lengthComputable) {
+        //             // 当今的进度就是已经传输的字符串e.loaded长度除以总共要传递的图片长度，得到的肯定是一个小数，将它往右移动两位并向上取整，再拼接上 % 号就是当前
+        //             // 文件上传的进度了
+        //             var currentProgress = Math.ceil((e.loaded / e.total) * 100) + '%';
+        //             // console.log(currentProgress);//写在open的前面就是：22 43 64 85 100%。。写在open后面也是一样的数据，但是绝对不能写在send语句后面
+        //             // 开始上传后，显示进度盒子，进度条，并将当前的进度设置为进度条的宽度占比，修改进度条中的显示内容为当前进度
+        //             progress.style.display = 'inline-block';
+        //             // 每次上传完成后都会将进度条样式设置为成功的颜色，因此重新上传时需要重新设置进度条的颜色
+        //             progressBar.classList = 'progress-bar progress-bar-striped';
+        //             progressBar.style.width = currentProgress;
+        //             progressBar.innerHTML = currentProgress;
+        //         }
+        //     }
+        //     // 上传完成后，将进度条的颜色修改
+        //     xhr.upload.onload = function () {
+        //         // 这样写留有bug，上传过一次以后进度条的颜色一直都是这个色了
+        //         // $('#progress-bar').removeClass().addClass('progress-bar progress-bar-success');
+        //         // 原生JS的修改样式写法
+        //         progressBar.className = '';
+        //         progressBar.classList = 'progress-bar progress-bar-success';
+        //     }
+        //     xhr.send(formData);
+        //     xhr.onreadystatechange = function () {
+        //         if (xhr.readyState === 4 && xhr.status === 200) {
+        //             // 这个反序列化的data对象就是后端返回的请求数据结果
+        //             var data = JSON.parse(xhr.responseText);
+        //             if (data.status == 200) {
+        //                 console.log(data);
+        //                 // 将上传成功的图片路径添加到页面元素中，提示上传成功！
+        //                 document.querySelector('#img').src = 'http://www.liulongbin.top:3006' + data.url;
+        //             } else {
+        //                 //上传失败
+        //                 console.log(data.message);
+        //             }
+        //         }
+        //     }
+        // });
+
+
+        // 使用XHR的L2新特性，快速获取表单中的数据，都必须得有name属性，与serialize方法类似
+        // var demo = document.querySelector('#demo');
+        // // 这里直接提交会返回提交成功，但是回显的数据为空，原因在于点击提交按钮就直接提交了，不会携带数据，需要先阻止默认的直接提交功能
+        // demo.addEventListener('submit', function (e) {
+        //     e.preventDefault();//点击提交按钮时先执行完下面的代码，再提交数据
+        //     var formData = new FormData(demo);
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open('POST', 'http://www.liulongbin.top:3006/api/formdata');
+        //     xhr.send(formData);
+        //     xhr.onreadystatechange = function () {
+        //         if (xhr.readyState === 4 && xhr.status === 200) {
+        //             console.log(xhr.responseText);
+        //         }
+        //     }
+        // })
+
+
+    // 使用XHR的L2新特性，通过H5新添加的form标签，在js中使用formData对象管理表单数据
+    // var formData = new FormData();
+    // formData.append('uname', 'aiyou');
+    // formData.append('upwd', '43123');
+    // // 使用xhr对象发送请求
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('POST', 'http://www.liulongbin.top:3006/api/formdata');
+    // // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    // xhr.send(formData);
+    // xhr.onreadystatechange = function () {
+    // if (xhr.readyState === 4 && xhr.status === 200) {
+    // console.log(xhr.responseText);
+    // }
+    // }
+
+    // 使用XHR的L2新特性，设置请求时间的最大值，以及过长时候给出响应信息
+    // var xhr = new XMLHttpRequest();
+    // xhr.timeout = 148;
+    // xhr.ontimeout = function () {
+    // console.log('请求无法在148ms之内完成');
+    // }
+    // xhr.open('get', 'http://www.liulongbin.top:3006/api/cmtlist');
+    // xhr.send();
+    // xhr.onreadystatechange = function () {
+    // if (xhr.readyState === 4 && xhr.status === 200) {
+    // console.log(xhr.responseText);
+    // }
+    // }
+
+    // myAjax({
+    // url: 'http://www.liulongbin.top:3006/api/cmtlist',
+    // method: 'get',
+    // // data: {
+    // // username: '胡汉三',
+    // // content: '我知道你很急，但你先别急'
+    // // },
+    // success: function (res) {
+    // console.log(res);
+    // }
+    // });
+
+
+    // 封装一个查询字符串函数
+    // function resolveString(data) {
+    // var arr = [];
+    // for (let k in data) {
+    // // 遍历对象中的简单数据属性，将每个属性的名和值通过=符号进行拼接，按顺序放到数组中去。
+    // arr.push(k + '=' + data[k]);
+    // }
+    // console.log(arr);
+    // // join方法将数组中的元素使用&字符进行隔开，不包括第一个和最后一个，并将数组中的元素转换为字符串
+    // return arr.join('&');
+    // }
+    // var demo = {
+    // name: 'zhangsan',
+    // age: 444,
+    // sex: 'man'
+    // }
+    // var test = resolveString(demo);
+    // console.log(typeof test);
+    // console.log(test);
+
+    // 将请求到的数据转换为对象
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('get', 'http://liulongbin.top:3006/api/getbooks');
+    // xhr.send();
+    // xhr.onreadystatechange = function () {
+    // if (xhr.readyState === 4 && xhr.status === 200) {
+    // console.log(xhr.responseText);//返回的结果就是一个JSON格式的数据。是一个经过序列化后生成的数据
+    // console.log(typeof xhr.responseText);//string。
+    // var zhuanhuan = JSON.parse(xhr.responseText);//将数据结去JSON化，正式名称叫做反序列化
+    // console.log(zhuanhuan); //data: (5) [{…}, {…}, {…}, {…}, {…}] msg: "获取图书列表成功" status: 200 [[Prototype]]: Object
+    // console.log(typeof zhuanhuan);//object
+    // }
+    // }
+
+
+    // JSON字符串：键值都是字符串。对象，键没有引号，值为单引号.JS对象和JSON字符串的相互转换使用JSON.parse方法就是转化哪位对象.JSON.stringfy方法就是将对象转换为JSON字符串
+    // 这是一个JS对象
+    // var duixiang = { name: 'zhangsan', age: 18 };
+    // console.log(typeof duixiang);//object
+    // // 将JS对象转换为一个JSON格式的字符串
+    // var zhuanhuan = JSON.stringify(duixiang);
+    // console.log(zhuanhuan);//{"name":"zhangsan","age":18}
+    // console.log(typeof zhuanhuan);//string
+
+    // // 将JSON字符串转换为JS对象
+    // var jsonStr = '{ "name": "zhangsan", "age": 18 }';
+    // console.log(typeof jsonStr);//string
+    // var xiang = JSON.parse(jsonStr);
+    // console.log(xiang); //age: 18 name: "zhangsan" [[Prototype]]: Object
+    // console.log(typeof xiang);//object
+
+
+
+    // 使用原生post提交数据到指定接口中去
+    // 1.实例化一个请求对象
+    // var xhr = new XMLHttpRequest();
+    // // 2.让对象添加请求方式和接口地址
+    // xhr.open('post', 'http://www.liulongbin.top:3006/api/addbook');
+    // // 3.设置传送的数据编码类型属性，必须设置.这里就是对上传的数据进行编码，如果是文件这里第二个属性就是multipart/form-data这样子
+    // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    // // 4.设置传送的值，调用send函数
+    // xhr.send('bookname=原生js&author=提交&publisher=post请求');
+    // // 5.设置监听事件
+    // xhr.onreadystatechange = function (res) {
+    // if (xhr.readyState === 4 && xhr.status == 200) {
+    // console.log(xhr.responseText);
+    // }
+    // }
+
+
+
+    // 将中文字符串编码后解码
+    // var str = '张辉';
+    // console.log(encodeURI(str)); //结果：%E5%BC%A0%E8%BE%89
+    // // 取第一字个就是前三个 % 号所表示的字符
+    // console.log(decodeURI('%E5%BC%A0'));//张
+
+
+    </script>
+
+    <!-- <script>
+        // 使用原生JS的XHR发起请求
+        // 1.创建原生的请求duixaing
+        var xhr = new XMLHttpRequest();
+        // 2.给实例设置一个要访问的接口和请求方法
+        // xhr.open('get', 'http://www.liulongbin.top:3006/api/getbooks');
+        // 2.5.给请求接口添加参数获取指定的数据，而不是全部。
+        // 在请求地址后面接上这个 ?键=值&键=值 这个东西就叫做查询字符串
+        xhr.open('get', 'http://www.liulongbin.top:3006/api/getbooks?id=2');
+        // 其实，ajax请求中的对象的参数就是查询字符串，{ id: 1, name: 'zhangsan' }.这种的，在请求的时候都会转换为 ? id = 1 & name='zhangsan'这种
+        // 3.实例发送请求
+        xhr.send();
+        // 4.监听实例的onreadystatechange事件
+        xhr.onreadystatechange = function () {
+            // 这两个条件的属性值不是后台里面的数据里面的status属性，后台的status值可以为任何数，这个相当于是浏览器成功发送请求的规定成功响应码
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        }
+
+        $.ajax({
+            url: 'http://www.liulongbin.top:3006/api/getbooks',
+            method: 'get',
+            data: {
+                id: 3,
+                bookname: '三国演义'
+            }, //http://www.liulongbin.top:3006/api/getbooks?id=3&bookname=%E4%B8%89%E5%9B%BD%E6%BC%94%E4%B9%89
+            //这个URL地址在请求参数解析后将非英文数字标点符号的字符会替换，这个操作叫做URL编码。通俗的理解就是将非英文字符转换成英文、数字字符
+            success: function (res) {
+                console.log(res);
+            }
+        })
+    </script> -->
+</body>
+
+</html>

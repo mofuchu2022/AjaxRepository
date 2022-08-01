@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap.css">
+    <script src="lib/jquery.js"></script>
+    <!-- 1.引入一个模板渲染引擎js文件 -->
+    <script src="lib/template-web.js"></script>
+    <script src="lib/pinglun.js"></script>
+    <title>Ajax第2天</title>
+</head>
+
+<body style="padding: 8px;">
+
+    <!-- 模板渲染引擎使用 -->
+    <div id="template-demo"></div>
+    <!-- 2.使用模板引擎的时候可以将类型修改为html结构去解析 -->
+    <script type="text/html" id="templates">
+        <!-- {{}},这种结构在模板引擎里面叫做标准语法 -->
+    <!-- 使用两个嵌套起来的大括号表示要存放的模板属性。不添加两个大括号就表示的是普通的html元素内容 -->
+    <!-- 如果模板中的属性的值是具有html结构的元素的时候，需要在属性前添加@符号，这个时候就可以正常渲染html结果的内容了 -->
+    <h2>{{name}}----------------{{lisi}}</h2>
+    <!-- sex属性的值因为还有html结构，所以正常渲染需要添加@符号 -->
+    <h3>{{@sex}}</h3>
+    <!-- 判断获取到的值从而决定显示的内容 -->
+    <div>
+        {{if flag===0}}
+        flag的值是0
+        {{else if flag===1}}
+        flag的值是1
+        {{/if}}
+    </div>
+    <ul>
+        <!-- 遍历的属性时对象的时候，第一个参数index对应的就是键名，第二个参数value就是键名对应的值 -->
+        {{each duixaing}}
+        <li>键名是：{{$index}},键值是:{{$value}}</li>
+        {{/each}}
+    </ul>
+    <ul>
+        <!-- 遍历的属性时数组的时候，第一个参数就是数组的索引，第二个参数就是对应索引里面存储的值 -->
+        {{each shuzu}}
+        <li>键名是：{{$index}},键值是:{{$value}}</li>
+        {{/each}}
+    </ul>
+    <h3>
+        <!-- 直接显示对象中存储的当前时间:"2022-07-28T13:32:24.482Z" -->
+        {{nowDate}}
+
+    </h3>
+    <h3>
+        <!-- 为了将对象中的时间只显示年月日，需要封装一个过滤器函数 -->
+        {{nowDate | dateFormat}}
+    </h3>
+    </script>
+    <!-- 3.默认的script标签里面的内容都是当做js函数去解析的 -->
+    <script type="text/javascript">
+        // 声明数据、调用模板引擎、添加到页面中都需要在js中去写
+        template.defaults.imports.dateFormat = function (date) {
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            // 将获取到的对象中的时间重新封装并返回给模板中的指定时间格式过滤器，名字为dateFormat。
+            return year + '年' + month + '月' + day + '日';
+        }
+
+        var data = {
+            name: 'zhangsan',
+            age: 'lisi',
+            sex: '<h1>man</h1>',
+            flag: 1,
+            duixaing: {
+                height: 10000,
+                money: 34234423,
+                nick: "hahaha"
+            },
+            shuzu: [3, 5, 6, 7, 89, 12],
+            nowDate: new Date(),
+        };
+        //4. 利用模板引擎的template方法，将data对象的属性，填入到名为templates的模板中去，然后存起来，等待调用
+        var templates = template('templates', data);
+        // 5.获取模板要存档的位置，模板的值插入到这个位置中去
+        $('#template-demo').html(templates);
+    </script>
+
+
+
+    <!-- bootstrap渲染评论结构 -->
+    <!-- <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">发表评论</h3>
+        </div>
+        <form id="submitPingLun" method="post" target="_self" enctype="application/x-www-form-urlencoded"
+            class="panel-body">
+            <span>评论人:</span>
+            <input type="text" class="form-control" placeholder="输入评论人名称" name="username" id="critic">
+            <span>评论内容：</span>
+            <textarea name="content" id="critic-content" name="critic-content" class="form-control" rows="3"
+                required="required" placeholder="输入评论内容"></textarea>
+            <button type="submit" class="btn btn-primary" style="outline: none;">发表评论</button>
+        </form>
+
+
+    </div>
+
+    <ul class="list-group" id="pingLunList">
+        <li class="list-group-item"> -->
+    <!-- 这个bagdge的默认样式颜色时灰色的，且元素时右浮动因此需要调整下顺序，才能将评论人在左边，时间在右边显示 -->
+    <!-- <span class="badge" style="background-color:bisque">评论时间:</span>
+            <span class="badge" style="background-color:aqua;">评论人:</span>
+            评论内容
+        </li>
+    </ul> -->
+
+
+
+
+    <!-- 表单中如果有提交文件时，必须将enctype属性设置为multipart/form-data，表示的是提交的时候不进行编码.enctype表示的是发送表单数据之前对数据进行何种方式的编码 -->
+    <!-- form表单的属性method，表示的是数据的提交方式，主要有两种：其一是get，也是不写属性的时候默认提交方法，将数据提交在URL地址栏 -->
+    <!-- 不是很安全。其二是post提交方式，它的数据时存储在表单里面，相对get更安全，也是常用的提交方式 -->
+    <!-- action就是form表单提交数据跳转的指定页面，不填写就是跳转到当前页面 ,submit表示的就是提交-->
+    <!-- <form action="http://www.baidu.com"> -->
+    <!-- target主要就是设置跳转后的页面是在当前页面还是新的窗口生成页面，_self表示的就是在当前页面，_blank表示的就是在新的页面 -->
+    <!-- <form id="demo" action="" target="_blank" method="get" enctype="application/x-www-form-urlencoded">
+        <input type="text" placeholder="姓名" name="username"> -->
+    <!-- 不添加name属性的元素，在jQuery中使用serialize方法获取不到该值 -->
+    <!-- <input type="password" placeholder="密码" name="psw">
+        <button type="submit">提交</button>
+    </form> -->
+    <!-- <script>
+        // 注意jQuery入口函数别忘了$
+        $(function () {
+            // $('#demo').on('submit', function (e) {
+            //     alert('进入了ajax表单的监听事件');
+            // })
+            $('#demo').submit(function (e) {
+                // alert('进入ajax表单的事件监听');
+                //一般进入了提交事件后，如果还需要进行校验就需要先阻止默认的提交行为。不论是哪一种写法调用的都是提交事件对象的阻止默认函数
+                e.preventDefault();//可以看到进入了这个提交函数，但是没有去跳转到指定的提交页面
+                // 使用jQUery封装的函数获取form表单中所有含有name属性自定义的键名和里面的值
+                var formVal = $(this).serialize();
+                console.log(formVal);
+            })
+        })
+
+    </script> -->
+</body>
+
+</html>

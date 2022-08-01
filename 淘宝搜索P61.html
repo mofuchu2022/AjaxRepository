@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <!-- 导入页面的基本样式 -->
+  <link rel="stylesheet" href="./css/search.css" />
+  <!-- 导入 jQuery -->
+  <script src="./lib/jquery.js"></script>
+  <!-- 导入模板引擎 -->
+  <script src="./lib/template-web.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Logo -->
+    <img src="./images/taobao_logo.png" alt="" class="logo" />
+
+    <div class="box">
+      <!-- tab 栏 -->
+      <div class="tabs">
+        <div class="tab-active">宝贝</div>
+        <div>店铺</div>
+      </div>
+      <!-- 搜索区域（搜索框和搜索按钮） -->
+      <div class="search-box">
+        <input id="ipt" type="text" class="ipt" placeholder="请输入要搜索的内容" /><button class="btnSearch">
+          搜索
+        </button>
+      </div>
+      <!-- 搜索建议列表 -->
+      <div id="suggest-list"></div>
+    </div>
+  </div>
+
+  <!-- 搜索结果动态渲染模板 -->
+  <script id="search-template" type="text/html">
+    {{each result}}
+      <div class="suggest-item">{{$value[0]}}</div>
+    {{/each}}
+  </script>
+
+  <script>
+    var timer = null;//设置定时器，用于防抖
+    // 设置一个用户缓存，将用户的输入作为键，响应结果作为值，存到一个数组中去，减少请求，可以直接响应
+    var cacheSearch = [];
+    //  用户在输入框中按下按键时触发监听事件
+    $('#ipt').on('keyup', function (e) {
+      // 能够触发计时器的事件，进入前都要记得先清除计时器
+      clearTimeout(timer);
+      var inpVal = $(this).val().trim();
+      // 输入框中去掉空格没有值时候不再执行代码
+      if (inpVal.length <= 0) {
+        // console.log('dd');
+        return $('#suggest-list').empty().hide();
+      }
+      // 如果缓存中有键对应的值，直接将之前响应过的值拿去渲染，不需要再去请求
+      if (cacheSearch[inpVal]) {
+        return renderSuggest(cacheSearch[inpVal]);
+      }
+      // 用户输入较快时，直接执行请求函数父服务器压力较大，通过设置一个定时器实现防抖效果，减少请求处理压力
+      // getSearchSuggest(inpVal);
+      deBounceSearch(inpVal);
+    });
+
+    // 获取淘宝搜索建议的接口数据，获取成功后调用函数将数据添加到模板中并且设置到页面中去
+    function getSearchSuggest(inpVal) {
+      $.ajax({
+        url: 'https:suggest.taobao.com/sug?q=' + inpVal,
+        dataType: 'jsonp',
+        success: function (res) {
+          // console.log(res);
+          renderSuggest(res);
+        }
+      })
+    }
+
+    // 渲染搜索结果到页面上
+    function renderSuggest(res) {
+      if (res.result.length <= 0) {
+        return $('#suggest-list').empty().hide();
+      }
+      var searchTemplate = template('search-template', res);
+      $('#suggest-list').html(searchTemplate).show();
+      // 设置搜索缓存，减轻服务器压力，将输入为键，返回的结果作为值进行保存
+      var k = $('#ipt').val().trim();
+      cacheSearch[k] = res;
+    }
+
+    // 设置一个防抖函数。防抖只需要添加定时器即可。节流需要判断之前是否存在定时器，存在就返回不再重新执行，节流计时器内部执行完成后计时器设置为null
+    function deBounceSearch(inpVal) {
+      timer = setTimeout(function () {
+        getSearchSuggest(inpVal);
+      }, 500);
+    }
+  </script>
+
+
+</body>
+
+</html>

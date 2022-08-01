@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/news.css">
+    <script src="lib/jquery.js"></script>
+    <script src="lib/template-web.js"></script>
+    <script src="lib/news.js"></script>
+    <title>使用jQuery结合Ajax和art-template模板渲染页面</title>
+</head>
+
+<body>
+    <div id="news-list">
+    </div>
+    <!-- 1.将模板数据放到script标签中，但是解析类型为html -->
+    <script type="text/html" id="news-template">
+        <!-- 测试返回对象的值能否在模板中使用 -->
+    <!-- {{data.length}} -->
+    <!-- 遍历返回的对象数组 -->
+    {{each data}}
+    <div class="news-item">
+        <!-- 路径为根路径拼接上返回对象每一项元素的图片路径属性值 -->
+        <img class="thumb" src="{{'http://www.liulongbin.top:3006'+$value.img}}" alt="" />
+        <div class="right-box">
+            <h1 class="title">{{$value.title}}</h1>
+            <!-- 返回的tags在每一项元素的属性中是一个字符串，但他们都用了逗号分割，因此可以在js中将这个属性的字符串使用分割函数编程数组进行循环 -->
+            <div class="tags">
+                {{each $value.tags}}
+                这个遍历的是tags数组，里面的value就是数组中对应的值
+                <span>{{$value}}</span>
+                {{/each}}
+            </div>
+            <div class="footer">
+                <div>
+                    <span>{{$value.source}}</span>&nbsp;&nbsp;
+                    <!-- 返回的时间需要进行格式美化，这个需要在js函数里面添加一个时间格式过滤器函数.这里获取的值就是传进dateFormat函数的参数 -->
+                    <span>{{$value.time | dateFormat}}</span>
+                </div>
+                <span>评论数：{{$value.cmtcount}}</span>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    </script>
+</body>
+
+</html>

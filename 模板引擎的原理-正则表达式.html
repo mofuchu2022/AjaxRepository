@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="lib/mytemplate.js"></script>
+    <title>实现简单的模板</title>
+</head>
+
+<body>
+    <div id="my-template"></div>
+    <script type="text/html" id="self-template">
+        <div>姓名：{{name}}</div>
+        <div>年龄：{{age}}</div>
+        <div>性别：{{sex}}</div>
+        <div>余额：{{money}}</div>
+        <div>身高：{{height}}</div>
+    </script>
+    <script>
+        // 调用一下自己封装的template模板函数，将值传到html结构里面去
+        // 1.先生成数据，传入到模板中去
+        var data = {
+            name: 'zhangsan',
+            age: 18,
+            sex: 'man',
+            money: 2349890,
+            height: 190
+        };
+        var data2 = {
+            name: 'lisi',
+            age: 56456,
+            sex: 'womennn',
+            money: 111111,
+            height: 4545
+        };
+
+        // 2.将数据传入到模板中去，生成变量，使元素能够被添加到指定的区域中去
+        var templateData = template('self-template', data);
+        // 3.将填充好数据的模板，添加到页面元素中切
+        // document.querySelector('#my-template').innerHTML(templateData);
+        document.querySelector('#my-template').innerHTML = templateData;
+
+        // 将对象中值使用正则表达式替换到指定内容中去
+        // var data = { name: "张三", age: 30, sex: 'man' };
+        // var str = '<div>你好，我是{{      name    }}，性别{{    sex }},今年{{   age }}岁了</div>';
+        // // {{}}里面的空格、tab符号一起匹配到，不管有多少个
+        // var zhengze = /{{\s*([A-z]{1,})\s*}}/;
+        // var result = null;
+        // while (result = zhengze.exec(str)) {
+        //     console.log(result);//第1次："{{      name    }}"
+        //     console.log(result[1]);//自动去除{{}}里面的空白字符。第1次："name"
+        //     str = str.replace(result[0], data[result[1]]);//这里必须用[]来获取result[1]这个是变量的属性名，用点必须跟随指定属性名称，所以这里不能用点
+        // }
+        // console.log(str);
+
+        //正则表达式字符，将对应格式的字符多次替换
+        // var str = '<div>哎呦卧槽{{zhangsan}},这不就替换{{hao}}了吗？</div>';
+        // var zhengze = /{{\s*([A-z]{1,})\s*}}/;//将{{}}里面所有包含A字符到z字符的值选取,里面的字符只有出现过1次都被选取在一起
+        // str = str.replace(result1[0], result1[1]);
+        // console.log(str);
+        // result1 = zhengze.exec(str);
+        // str = str.replace(result1[0], result1[1]);
+        // console.log(str);
+        // 使用while循环，当能匹配到值时，执行替换语句。匹配不到值时，result == null，条件的布尔值就是false，退出循环
+        // var result = null;
+        // while (result = zhengze.exec(str)) {
+        //     str = str.replace(result[0], result[1]);
+        // }
+        // console.log(str);
+
+        // 正则模板字符串替换
+        // var str = '<div>{{zhangsan}}</div>';
+        // var zhengze = /{{([A-z]+)}}/;
+        // var result = zhengze.exec(str);
+        // // console.log(result[0]);//{{zhangsan}},第二个元素是zhangsan
+        // console.log(result);//0: "{{zhangsan}}"1: "zhangsan"
+        // // 将str中匹配正则表达式子的值的第2个数组元素的值替换为第一个元素的值，其他内容不变
+        // str = str.replace(result[0], result[1]);//<div>zhangsan</div>
+        // console.log(str);
+
+        // 匹配第一个符合模板的字符串
+        // var str = '<div>{{hbnagarb}}</div>{{ff}}';
+        // var zhengze = /{{[(A-z)]{0,}}}/;
+        // console.log(zhengze.exec(str));
+
+        // 正则表达式exec()函数，通过表达式调用函数与给定的元素进行匹配，存在匹配的值就返回那个值，否则返回null
+        // let str = 'aiyouwocao';
+        // let zhengze = /^[a+]/;
+        // console.log(zhengze.exec(str));
+    </script>
+</body>
+
+</html>

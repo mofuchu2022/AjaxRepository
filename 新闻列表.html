@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/news.css">
+    <script src="lib/jquery.js"></script>
+    <!-- art-template模板 -->
+    <script src="lib/template-web.js"></script>
+    <script src="lib/news.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="news-list">
+
+    </div>
+
+    <!-- 生成一个art-template模板 -->
+    <script type="text/html" id="news-template">
+        <!-- 遍历返回后传过来的对象中每一项元素，将元素里面的值添加到模板中去 -->
+       {{each data}}
+    <div class="news-item">
+        <!-- 图片的路径是基础公共接口的路径连接上返回的图片路径 -->
+        <!-- each里面的data相当于是each正常遍历时被遍历的对象，而对象中具体的元素就是参数value，索引就是index。里面的值写法就是$value.属性名名 -->
+        <img class="thumb" src="{{'http://www.liulongbin.top:3006'+$value.img}}" alt="" />
+        <div class="right-box">
+            <h1 class="title">{{$value.title}}</h1>
+            <!-- tags里面的关键词元素不是固定的，且返回来的时候是一个字符串，因此在传入模板之前需要将字符串利用split方法通过逗号分割成数组，遍历生成span元素，并填充值 -->
+            <div class="tags">
+                <!-- 遍历每个对象的tags字符串分割生成后的数组 -->
+                {{each $value.tags}}
+                <!-- 将tags数组中的每个元素添加到一个span中去 -->
+                <span>{{$value}}</span>
+                {{/each}}
+            </div>
+            <div class="footer">
+                <div>
+                    <span>{{$value.source}}</span>&nbsp;&nbsp;
+                    <span>{{$value.time | timeFormat}}</span>
+                </div>
+                <span>评论数：{{$value.cmtcount}}</span>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    </script>
+
+</body>
+
+</html>
