@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="lib/jquery.js"></script>
+    <title>Ajax第4天</title>
+</head>
+
+<body>
+    <button id="btn">jQuery发送一个jsonp请求</button>
+</body>
+
+<script>
+    // 使用Ajax发送JSONP请求，请求类型为JS脚本，不是XHR,因此也就不是Ajax请求。这个是用来解决跨域问题的.
+    $(function () {
+        // 点击的时候创建一个jsonp请求，jQuery在发送这个请求的时候就是在header标签里面动态创建一个script标签，
+        // 来实现跨域，请求完成后删除script标签，以及里面的src属性
+        $('#btn').on('click', function () {
+            $.ajax({
+                url: 'http://www.liulongbin.top:3006/api/jsonp?name=zs&age=999',
+                dataType: 'jsonp',
+                // jsonp属性就是发送到服务器端的参数名称，默认都是callback，修改可能就找不到写好的方法了
+                jsonp: 'callback',
+                // 自定义的回调函数名称，对于jQuery来说就是代替callback后面的jQuery随机生成的的xxxxx
+                //不设置jsonpCallback属性：您指定的回调函数名称是 jQuery341029904626398765366_1659325996403
+                jsonpCallback: 'aa',//您指定的回调函数名称是 aiyouwocao
+                success: function (res) {
+                    console.log(res);
+                }
+            })
+        })
+    })
+
+</script>
+
+
+<!-- <script>
+    // JSONP的实现原理
+    // 1.定义函数和调用函数不在同一个script标签里面
+    function getData(data) {
+        console.log('获取到了JSONP取得的数据');
+        console.log(data);
+    }
+</script>
+<script src="http://www.liulongbin.top:3006/api/jsonp?callback=getData&name=zs&age=20">
+    // 2.根据自定义的JSONP请求接口数据.可以在控制台NetWork看到请求的类型不是XHR，而是JS脚本请求，在ALL里面可以看到是一个jsonp前缀的请求
+
+</script> -->
+
+<!-- 3.因此,在引入调用文件的时候,需要添加回调参数,只有文件中调用指定函数的代码才能被请求 -->
+<!-- <script src="lib/GetData.js?callback=getData">
+
+
+    // $.ajax({
+    //     // 因为我自己的电脑地址肯定和它的协议域名端口不相同所以是跨域，默认是不能进行Ajax请求的
+    //     url: 'http://ajax.frontend.itheima.net:3006/api/jsonp',
+    //     method: 'GET',
+    //     data: {
+    //         name: 'zs',
+    //         age: 20
+    //     },
+    //     success: function (res) {
+    //         console.log(res);
+    //         //Access to XMLHttpRequest at 'https://www.baidu.com/?name=zs&age=90' (redirected from 'http://www.baidu.com/?name=zs&age=90') from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+    //     }
+    // })
+</script> -->
+
+</html>
