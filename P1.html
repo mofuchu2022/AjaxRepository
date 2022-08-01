@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap.css" />
+    <script src="lib/jquery.js"></script>
+    <title>Ajax第1天 </title>
+</head>
+
+<body style="padding:10px;">
+    <!-- 聊天机器人看资料第一天 -->
+
+    <!--使用bootstrap3 snippets插件， bs3-input-group-addon的快捷命令利用bootstrap3快速生成一个蓝色背景的面板 -->
+    <!-- <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">添加新张三</h3>
+        </div>
+        <div class="panel-body form-inline"> -->
+    <!-- 使用bs3-input的快捷命令生成一个待带名称的输入框 -->
+    <!-- <div class="input-group">
+                <div class="input-group-addon">书名</div>
+                <input type="text" class="form-control" id="bookname" placeholder="请输入书名">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">作者</div>
+                <input type="text" class="form-control" id="author" placeholder="请输入作者">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon">出版社</div>
+                <input type="text" class="form-control" id="publish" placeholder="请输入出版社">
+            </div>
+            <button type="button" class="btn btn-success" id="btnAdd">添加功能</button>
+        </div>
+    </div> -->
+
+    <!-- <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>书名</th>
+                <th>作者</th>
+                <th>出版社</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table> -->
+    <!-- <script>
+        // 1.请求数据，渲染到tobdy里面
+        $(function () {
+            function getbooks() {
+                // 向这个接口请求数据，并获取返回的对象信息
+                $.get('http://www.liulongbin.top:3006/api/getbooks', function (resp) {
+                    // 请求地址返回的状态码不是200的时候，就提示错误信息
+                    if (resp.status != 200) {
+                        alert('请求数据失败了');
+                        return;
+                    }
+                    // 获取一个空数组
+                    var arrays = [];
+                    // 这个获取到的回显对象不是我们要遍历的对象，里面的data属性存放的才是
+                    // console.log(resp);
+                    // 遍历返回的对象信息，每个元素在遍历时都将对应的属性根据表头顺序对应添加到每一行的tr中去，然后放进数组。将所有的tr在遍历结束
+                    // 后添加到tbody里面。注意这里用的是push方法，直接将拼接的tr数组字符串放到括号里面去，不要用等于号赋值！！！
+                    // 拼接变量的时候采用殷殷佳佳，拼接a标签就千万记得不要再这样殷殷佳佳了，直接写就好了
+                    $.each(resp.data, function (i, item) {
+                        // 注意遍历的对象不是回显的resp对象，而是里面resp属性中data里面的对象
+                        arrays.push('<tr><td>' + item.id + '</td><td>' + item.bookname + '</td><td>' + item.author
+                            + '</td><td>' + item.publisher + '</td><td><a href="javascript:;" data-index=' + item.id +
+                            '>删除</a> </td></tr>');
+                    })
+                    console.log(arrays);
+                    // 渲染的时候先清空之前的元素，然后再添加获取到的数组.join方法没用过，加不加目前看不到区别
+                    $('#tbody').empty().append(arrays.join(''));
+                });
+            }
+            // 调用一下渲染函数
+            getbooks();
+
+            // 删除功能
+            //因为表格是动态创建的，因此删除事件不能直接进行点击绑定，可以用事件委托，给tbody父元素进行绑定点击然后委托给a标签的删除按钮
+            $('#tbody').on('click', 'a', function () {
+                // 获取到被点击的动态创建的a标签的data-index属性
+                var id = $(this).attr('data-index');
+                // console.log(id);
+                // alert(id);
+                $.get('http://www.liulongbin.top:3006/api/delbook',
+                    { id: id },
+                    function (res) {
+                        if (res.status != 200) {
+                            return alert('抱歉，删除失败');
+                        }
+                    });
+                // 删除完成后重新渲染页面
+                getbooks();
+            })
+
+            // 添加功能。注意jQuery中获取元素的值要用val函数加括号，原生的是直接写value
+            $('#btnAdd').click(function () {
+                $.post('http://www.liulongbin.top:3006/api/addbook',
+                    {
+                        // 将用户输入的值去除左右两侧的空格
+                        bookname: $('#bookname').val().trim(),
+                        author: $('#author').val().trim(),
+                        publisher: $('#publish').val().trim()
+                    },
+                    function (res) {
+                        // 提交请求成功验证码不能和查询请求成功验证码一致
+                        if (res.status != 201) {
+                            return '抱歉，图书添加失败！';
+                        }
+                    })
+                //添加完成后重新渲染一下页面
+                getbooks();
+            });
+        })
+
+    </script> -->
+
+
+    <!-- <button id="btn">1234</button> -->
+    <!-- <script>
+        $(function () {
+            $('#btn').on('click', function () {
+                // 使用$.get获取不带参数的请求，并执行回调函数，打印请求数据
+                // $.get('https://www.escook.cn/api/goods', function (res) {
+                //     console.log(res);
+                // })
+
+                // 之前不知道哪里写错了导致的访问不到这个域名出现了跨域问题
+                // $.get('http://www.liulongbin.top:3006/api/getbooks', function (res) {
+                //     console.log(res); 
+                // })
+
+                // 使用jQuery的post请求向服务器提交数据
+                // $.post(
+                //     'http://www.liulongbin.top:3006/api/addbook',
+                //     { id: 121384, bookname: '二零二二年', publisher: '张三出版社', author: '七月二十七' },
+                //     function (res) {
+                //         console.log(res);
+                //     }
+                // );
+                
+                // get中最后一个参数为回调函数。第二个参数可以对象，也可以不写
+                // 使用jQuery的get带参数请求指定的数据.这里是获取这个数据列表中id为3的对象数据。这个调整后就是获取有属性名为出版社，值为这个的对象数据
+                // $.get('http://www.liulongbin.top:3006/api/getbooks', function (resp) {
+                //     console.log(resp);//提交请求成功后返回201代码
+                // });
+
+                // 使用ajax的get请求获取指定地址的指定数据，并回显信息
+                // $.ajax({
+                //     type: 'get',//请求数据的方法，这个表示获取
+                //     url: 'http://www.liulongbin.top:3006/api/getbooks',//请求地址
+                //     data: {
+                //         //不写就是请求所有的数据
+                //     },
+                //     success: function (res) {
+                //         console.log(res);//将请求到的数据回显回来打印
+                //     }
+                // });
+
+                // 使用ajax的post请求上传数据，并回显信息
+                // $.ajax({
+                //     type: 'post',
+                //     url: 'http://www.liulongbin.top:3006/api/addbook',
+                //     data: {
+                //         id: '727',
+                //         author: 'Post方法',
+                //         publisher: '李四出版社',
+                //         bookname: '王五的书'
+                //     },
+                //     success: function (res) {
+                //         console.log(res);
+                //     }
+                // })
+                
+
+            });
+        });
+    </script> -->
+
+</body>
+
+</html>
