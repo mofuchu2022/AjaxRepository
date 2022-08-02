@@ -1,2 +1,5 @@
 #忽略demoIgnore下的所有文件
-demoIgnore/
+# demoIgnore/
+
+#忽略当前目录下的wocao文件，但不忽略其他文件夹下的wocao文件
+/wocao
