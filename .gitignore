@@ -3,3 +3,6 @@ demoIgnore/
 
 #忽略当前目录下的wocao文件，但不忽略其他文件夹下的wocao文件
 /wocao
+
+#忽略test04.html这个文件
+test04.html
