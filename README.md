@@ -1,3 +1,4 @@
+"""
 Sub UpdateColumns()
     On Error GoTo ErrorHandler
     Application.ScreenUpdating = False
@@ -79,3 +80,5 @@ ErrorHandler:
     Application.ScreenUpdating = True
     Application.Calculation = xlCalculationAutomatic
 End Sub
+
+"""
